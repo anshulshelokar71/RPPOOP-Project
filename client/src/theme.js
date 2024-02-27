@@ -57,9 +57,9 @@ export const themeSettings = (mode) => {
         : {
             // palette values for light mode
             primary: {
-              dark: colorTokens.primary[700],
-              main: colorTokens.primary[500],
-              light: colorTokens.primary[50],
+              dark: colorTokens.primary[900],
+              main: colorTokens.primary[700],
+              light: colorTokens.primary[400],
             },
             neutral: {
               dark: colorTokens.grey[700],
@@ -70,7 +70,7 @@ export const themeSettings = (mode) => {
             },
             background: {
               default: colorTokens.grey[10],
-              alt: colorTokens.grey[0],
+              alt: colorTokens.grey[200],
             },
           }),
     },

@@ -1,0 +1,35 @@
+.landing-container{
+    height: 90vh;
+    background-color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .landingText{
+    width: 50%;
+    font-size: 2em;
+    z-index: 1;
+    color: white;
+    font-family:'Courier New', Courier, monospace;
+  }
+  
+  .slideshow{
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /* position: relative; */
+  }
+  
+  .slideshow img{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    filter: brightness(35%);
+  }

@@ -5,12 +5,11 @@ import Host from "../models/Host.js";
 export const infographics = async (req, res) => {
   try {
     const id = req.params;
-    const {name, about, date,contact } = req.body;
+    const {about, date,contact } = req.body;
     console.log(req.body); 
     // const host = await Host.findById(userId);
     const newInfo = new Info({
       infoId:id,
-      name:name,
       about:about,
       date:date,
       contact:contact,

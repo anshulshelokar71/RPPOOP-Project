@@ -1,6 +1,6 @@
 import React from "react";
 // import * as React from 'react';
-import { Formik } from "formik";
+import { Formik ,useField} from "formik";
 import * as yup from "yup";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import HostsWidget from "scenes/widgets/HostsWidget";
 import NavbarHost from "../NavbarHost";
 import HostWidget from "scenes/widgets/HostWidget";
+import { parse } from 'date-fns';
 // import { setPosts } from "state";
 
 const style = {
@@ -28,15 +29,17 @@ const style = {
 
 const infoSchema = yup.object().shape({
   infoId:yup.string(),
-  name: yup.string().required("required"),
   about: yup.string().required("required"),
-  date: yup.string().required("required"),
-  contact: yup.string().required("required"),
+  date: yup.date().required("required"),
+  contact: yup.string()
+  .required()
+  .matches(/^[0-9]+$/, "Must be only digits")
+  .min(10, 'Must be exactly 10 digits')
+  .max(10, 'Must be exactly 10 digits'),
 });
 
 const initialValuesInfo = {
   infoId:"",
-  name: "",
   about: "",
   date: "",
   contact: "",
@@ -118,7 +121,7 @@ export const Dashboard = () => {
             <form onSubmit={handleSubmit}>
               
               <Box sx={style}>
-                <TextField  label={_id} disabled
+                <TextField   disabled
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={_id}
@@ -129,15 +132,9 @@ export const Dashboard = () => {
                 helperText={touched.infoId && errors.infoId}
                 />
                 <TextField
-                 label="FEST/CLUB Name"
-                 onBlur={handleBlur}
-                 onChange={handleChange}
-                 value={values.name}
+                 label={Name}
                  name="name"
-                 error={
-                   Boolean(touched.name) && Boolean(errors.name)
-                 }
-                 helperText={touched.name && errors.name}
+                 disabled
                 />
                 <TextField
                   label="About"
@@ -152,6 +149,7 @@ export const Dashboard = () => {
                 />
                 <TextField
                   label="Date of induction"
+                  placeholder="dd/mm/yyyy"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.date}
@@ -165,7 +163,7 @@ export const Dashboard = () => {
                   label="Contact"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.Name}
+                  value={values.contact}
                   name="contact"
                   error={
                     Boolean(touched.contact) && Boolean(errors.contact)

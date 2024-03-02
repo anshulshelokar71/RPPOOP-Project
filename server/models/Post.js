@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const infoSchema = mongoose.Schema(
   {
+    infoId: {
+      type:Object,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -15,16 +19,16 @@ const infoSchema = mongoose.Schema(
       required: true,
     },
     contact: {
-        type: String,
-        required: true,
-      },
-    registrations:{
+      type: String,
+      required: true,
+    },
+    registrations: {
       type: Array,
       default: [],
-    }
-    
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
+  
 );
 
 const Info = mongoose.model("Info", infoSchema);

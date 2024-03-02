@@ -4,10 +4,12 @@ import Host from "../models/Host.js";
 // /* CREATE */
 export const infographics = async (req, res) => {
   try {
+    const id = req.params;
     const {name, about, date,contact } = req.body;
     console.log(req.body); 
     // const host = await Host.findById(userId);
     const newInfo = new Info({
+      infoId:id,
       name:name,
       about:about,
       date:date,
@@ -49,8 +51,8 @@ export const update = async (req, res) => {
   try {
     const { _id,studentsReg } = req.body;
     const post = await Info.findById(_id);
-    const isReg = post.registrations.find((element)=> element==studentsReg);
-    const index = post.registrations.indexOf((element)=> element==studentsReg);
+    const isReg = post.registrations.find((element)=> element.userId===studentsReg.userId);
+    const index = post.registrations.indexOf((element)=> element.userId===studentsReg.userId);
 
     if (isReg) {
       post.registrations.splice(index,1);

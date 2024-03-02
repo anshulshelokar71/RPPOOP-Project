@@ -12,7 +12,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLogin } from "state";
+import { setLoginHost } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 
@@ -82,8 +82,8 @@ const Form = () => {
     onSubmitProps.resetForm();
     if (loggedIn) {
       dispatch(
-        setLogin({
-          user: loggedIn.user,
+        setLoginHost({
+          host: loggedIn.host,
           token: loggedIn.token,
         })
       );

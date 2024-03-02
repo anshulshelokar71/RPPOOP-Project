@@ -28,7 +28,7 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
 
   const enrolStudent = async (props) => {
     console.log(userId)
-    const response = await fetch(`http://localhost:3001/posts/${userId}/update`, {
+    const response = await fetch(`http://localhost:3001/posts/update`, {
       method: "PATCH",
       headers: {   Authorization: `Bearer ${token}`
         ,"Content-Type": "application/json", },

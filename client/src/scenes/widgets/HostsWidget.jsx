@@ -12,12 +12,12 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from "@emotion/react";
 
 // import PostWidget from "./PostWidget";
-const HostsWidget = () => {
+const HostsWidget = ({userId,name}) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
-  // console.log(userId);
+  // console.log(name);
   const getPosts = async () => {
     const response = await fetch("http://localhost:3001/posts", {
       method: "GET",
@@ -43,15 +43,29 @@ const HostsWidget = () => {
     getPosts();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return <>
+
+  return (
+
+    <>
+    <p>
+    {userId}
+    {name}
+    </p>
+   
+    {/* {posts.map((element)=>{
+      if(element.name===name){
+        let i=0;
+        element.map(({registrations})=>{
+          <p>{registrations[i++].mis}</p> 
+        })
+      }
+    })} */}
+    </>
+  )
+
   
-  {posts.map(({ registrations }) => (
-    <Box>
-      {registrations[1].userName+"\n"}
-      {registrations[1].mis}
-      hi
-    </Box>
-  ))}</>;
+   
+  ;
 };
 
 export default HostsWidget;

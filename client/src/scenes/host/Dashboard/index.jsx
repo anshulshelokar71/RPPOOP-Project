@@ -10,7 +10,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import HostsWidget from "scenes/widgets/HostsWidget";
-
+import NavbarHost from "../NavbarHost";
+import HostWidget from "scenes/widgets/HostWidget";
 // import { setPosts } from "state";
 
 const style = {
@@ -26,6 +27,7 @@ const style = {
 };
 
 const infoSchema = yup.object().shape({
+  infoId:yup.string(),
   name: yup.string().required("required"),
   about: yup.string().required("required"),
   date: yup.string().required("required"),
@@ -33,6 +35,7 @@ const infoSchema = yup.object().shape({
 });
 
 const initialValuesInfo = {
+  infoId:"",
   name: "",
   about: "",
   date: "",
@@ -47,18 +50,18 @@ export const Dashboard = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  // const { _id} = useSelector((state) => state.user);
+  const {_id,Name} = useSelector((state) => state.host);
   const token = useSelector((state) => state.token);
   const infographics = async (values, onSubmitProps) => {
     // this allows us to send form info with image
     const formData = new FormData();
+    formData.append("infoId",_id);
     for (let value in values) {
       formData.append(value, values[value]);
     }
-    // console.log(values);
-    // formData.append("picturePath", values.picture.name);
+    console.log(values);
 
-    const savedUserResponse = await fetch("http://localhost:3001/posts", {
+    const savedUserResponse = await fetch(`http://localhost:3001/posts/${_id}`, {
       method: "POST",
       headers: {
         
@@ -66,6 +69,7 @@ export const Dashboard = () => {
       },
      
       body: JSON.stringify(values),
+      // body: formData,
     });
     const savedUser = await savedUserResponse.json();
     onSubmitProps.resetForm();
@@ -78,12 +82,14 @@ export const Dashboard = () => {
   const handleFormSubmit = async (values, onSubmitProps) => {
     // if (isLogin) await login(values, onSubmitProps);
     await infographics(values, onSubmitProps);
-    console.log("Hi")
+   
   };
 
   return (
     <>
+      <NavbarHost name={Name}/>
       <h4>DASHBOARD</h4>
+      {/* <HostWidget userId={_id} /> */}
       <hr />
       <Button variant="contained" size="medium" onClick={handleOpen}>
         Add Info
@@ -110,7 +116,18 @@ export const Dashboard = () => {
             resetForm,
           }) => (
             <form onSubmit={handleSubmit}>
+              
               <Box sx={style}>
+                <TextField  label={_id} disabled
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={_id}
+                name="infoId"
+                error={
+                  Boolean(touched.infoId) && Boolean(errors.infoId)
+                }
+                helperText={touched.infoId && errors.infoId}
+                />
                 <TextField
                  label="FEST/CLUB Name"
                  onBlur={handleBlur}
@@ -164,7 +181,7 @@ export const Dashboard = () => {
         </Formik>
       </Modal>
 
-      <HostsWidget />
+      <HostsWidget userId={_id} name={Name}/>
     </>
   );
 };

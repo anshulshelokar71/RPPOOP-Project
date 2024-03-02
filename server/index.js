@@ -49,7 +49,7 @@ const upload = multer({ storage });
 /* ROUTES WITH FILES */
 app.post("/auth/register", upload.single("picture"), register);
 app.post("/auth/registerHost", upload.single("picture"), registerHost);
-app.post("/posts", infographics);
+app.post("/posts/:id", infographics);
 
 /* ROUTES */
 app.use("/auth", authRoutes);

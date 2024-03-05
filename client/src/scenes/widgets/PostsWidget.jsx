@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 // import * as React from 'react';
@@ -13,6 +13,7 @@ import { useTheme } from "@emotion/react";
 // import PostWidget from "./PostWidget";
 const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
   const theme = useTheme();
+  const [isEnrolled,setIsEnrolled] = useState(false);
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
@@ -66,7 +67,7 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
   return (
     <>
       {posts.map(({ _id, name, about, date, contact }) => (
-        <Card sx={{ minWidth: 275, mb: 6 }}>
+        <Card sx={{ minWidth: 275, mb: 6 }} key={_id}>
           <CardContent>
             <Typography sx={{ fontSize: 20 }} color="primary" gutterBottom>
               {name}
@@ -84,7 +85,12 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button size="small" onClick={()=>enrolStudent({_id})}>ENROL HERE</Button>
+            {posts.registrations&&posts.registrations.findOne((ele)=> {
+              
+              if(ele===userId)
+              setIsEnrolled(true)
+              })}
+            {isEnrolled?<Button size="small" key={_id} onClick={()=>enrolStudent({_id})}>UNENROL HERE</Button>:<Button size="small" key={_id} onClick={()=>enrolStudent({_id})}>ENROL HERE</Button>}
           </CardActions>
         </Card>
       ))}

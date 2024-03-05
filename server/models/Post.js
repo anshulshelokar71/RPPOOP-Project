@@ -6,21 +6,19 @@ const infoSchema = mongoose.Schema(
       type:Object,
       required: true,
     },
-    name: {
-      type: String,
-      required: true,
-    },
+    
     about: {
       type: String,
       required: true,
     },
     date: {
-      type: String,
+      type: Date,
       required: true,
     },
     contact: {
       type: String,
       required: true,
+      max: 10,
     },
     registrations: {
       type: Array,

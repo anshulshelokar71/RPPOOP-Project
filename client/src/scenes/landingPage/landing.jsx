@@ -119,12 +119,12 @@ export default function Landing() {
                     backgroundColor: "#1A2027",
                   }}
                   onClick={() => {
-                    console.log("hello");
+                    console.log(value);
                   }}
                 >
                   <Link to={`${value}login`}>
                     <Typography
-                      variant="h5"
+                      variant="h3"
                       color="white"
                       sx={{ display: "flex", justifyContent: "space-around" }}
                     >

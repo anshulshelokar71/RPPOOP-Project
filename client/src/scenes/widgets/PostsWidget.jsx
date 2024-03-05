@@ -43,7 +43,6 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
       })
     });
     const updatedPost = await response.json();
-    setIsEnrolled(!isEnrolled);
     dispatch(setPost({ post: updatedPost }));
     if(updatedPost){
       alert("Enrolled successfully");
@@ -68,7 +67,7 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
   return (
     <>
       {posts.map(({ _id, name, about, date, contact }) => (
-        <Card sx={{ minWidth: 275, mb: 6 }}>
+        <Card sx={{ minWidth: 275, mb: 6 }} key={_id}>
           <CardContent>
             <Typography sx={{ fontSize: 20 }} color="primary" gutterBottom>
               {name}
@@ -86,6 +85,11 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
             </Typography>
           </CardContent>
           <CardActions>
+            {posts.registrations&&posts.registrations.findOne((ele)=> {
+              
+              if(ele===userId)
+              setIsEnrolled(true)
+              })}
             {isEnrolled?<Button size="small" key={_id} onClick={()=>enrolStudent({_id})}>UNENROL HERE</Button>:<Button size="small" key={_id} onClick={()=>enrolStudent({_id})}>ENROL HERE</Button>}
           </CardActions>
         </Card>

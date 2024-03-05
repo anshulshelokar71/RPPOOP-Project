@@ -13,7 +13,7 @@ import userRoutes from "./routes/users.js";
 import hostRoutes from "./routes/host.js";
 import postRoutes from "./routes/posts.js";
 import { register,registerHost } from "./controllers/auth.js";
-import { infographics } from "./controllers/posts.js";
+import { infographics, quiz } from "./controllers/posts.js";
 import { verifyToken } from "./middleware/auth.js";
 import Student from "./models/User.js";
 import Host from "./models/Host.js";
@@ -50,6 +50,8 @@ const upload = multer({ storage });
 app.post("/auth/register", upload.single("picture"), register);
 app.post("/auth/registerHost", upload.single("picture"), registerHost);
 app.post("/posts/:id", infographics);
+app.post("/posts/quiz/:id", quiz);
+
 
 /* ROUTES */
 app.use("/auth", authRoutes);

@@ -11,6 +11,7 @@ import { themeSettings } from "./theme";
 import Landing from "scenes/landingPage/landing";
 import LoginPageHost from "scenes/host/loginPage";
 import { Dashboard } from "scenes/host/Dashboard/index";
+import AddQuestionsComp from "scenes/host/quiz";
 // import HomePageHost from "scenes/host/Dashboard/index";
 
 

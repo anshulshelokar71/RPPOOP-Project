@@ -15,6 +15,8 @@ import { useDispatch } from "react-redux";
 import { setLoginHost } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
+import Swal from "sweetalert2/dist/sweetalert2.js";
+
 
 const registerSchema = yup.object().shape({
   Name: yup.string().required("required"),
@@ -68,6 +70,12 @@ const Form = () => {
     onSubmitProps.resetForm();
 
     if (savedUser) {
+      Swal.fire({
+        title: "SUCCESS",
+        icon: "success",
+        showConfirmButton: true,
+        text: "Registered",
+        });
       setPageType("login");
     }
   };
@@ -87,6 +95,12 @@ const Form = () => {
           token: loggedIn.token,
         })
       );
+      Swal.fire({
+        title: "SUCCESS",
+        icon: "success",
+        showConfirmButton: true,
+        text: "Logged in",
+        });
       navigate("/homeHost");
     }
   };

@@ -13,6 +13,7 @@ import HostsWidget from "scenes/widgets/HostsWidget";
 import NavbarHost from "../NavbarHost";
 import HostWidget from "scenes/widgets/HostWidget";
 import { parse } from 'date-fns';
+import AddQuestionsComp from "../quiz";
 // import { setPosts } from "state";
 
 const style = {
@@ -180,6 +181,7 @@ export const Dashboard = () => {
       </Modal>
 
       <HostsWidget userId={_id} name={Name}/>
+      <AddQuestionsComp userId={_id} />
     </>
   );
 };

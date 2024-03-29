@@ -38,6 +38,7 @@ import { styled } from "@mui/material/styles";
 // import { backendURL } from "../../configKeys";
 import Swal from "sweetalert2";
 import { useTheme } from "@emotion/react";
+import { useEffect } from "react";
 
 const StyledContent = styled("div")(({ theme }) => ({
   maxWidth: 600,
@@ -84,6 +85,7 @@ const AddQuestionsComp = ({ userId }) => {
   const [questionId, setQuestionId] = useState("");
   const [loadingFlag, setLoadingFlag] = useState(true);
   const [error, setError] = useState(false);
+  const [rows, setRows] = useState([]);
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
   const primaryLight = theme.palette.primary.light;
@@ -155,13 +157,14 @@ const AddQuestionsComp = ({ userId }) => {
       answers: updatedanswerss,
     }));
   };
+ 
 
   const handleAddQuestion = async () => {
     if (!newQuestion.question_text || !newQuestion.question_identifier) {
       setError(true);
       // alert("Enter a Question.");
     } else if (newQuestion.answers.some((answer) => answer)) {
-      console.log(newQuestion);
+      // console.log(newQuestion);
       newQuestion.question_id = Math.random().toString(36).substring(2, 7);
       let data = newQuestion;
       let temp_ans = newQuestion.answers;
@@ -182,39 +185,77 @@ const AddQuestionsComp = ({ userId }) => {
       }
       data["answers"] = ans_string;
       data["options"] = options_string;
-      console.log(newQuestion);
+      // console.log(newQuestion);
       setNewQuestion(data);
       let quizData = { questions: [] };
       quizData.questions.push(newQuestion);
-      console.log(questions);
+      // let updatedQuestions = [...questions, data];
+      // console.log(quizData);
       const savedUserResponse = await fetch(
         `http://localhost:3001/posts/quiz/${userId}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
           },
-
-          body: quizData,
-          // body: formData,
+          body: JSON.stringify(quizData)
+          
         }
       );
       const savedUser = await savedUserResponse.json();
       // onSubmitProps.resetForm();
-
+        console.log(savedUser)
       if (savedUser) {
         console.log("quiz stored succesfully");
         alert("Updated");
+        window.location.reload();
       }
     } else {
       alert("Please select at least one correct answer.");
     }
   };
+
+  const handleDeleteQuestion = async(question_ids) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'You are about to delete this question. This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+    if (result.isConfirmed) {
+      try {
+
+        const response = await fetch(`http://localhost:3001/posts/quiz/${userId}/deleteQuestion`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json' // Specify the content type
+          },
+          body:JSON.stringify(question_ids),
+        });
+        if (response.ok) {
+          // If question deleted successfully, show success message
+          await Swal.fire('Success!', 'Question deleted successfully.', 'success');
+        } else {
+          // If there was an error deleting the question, show error message
+          Swal.fire('Error!', 'Failed to delete question.', 'error');
+        }
+        window.location.reload();
+      } catch (error) {
+        console.error('Error deleting question:', error);
+        Swal.fire('Error!', 'Failed to delete question.', 'error');
+      }
+    }
+    
+  };
+
   const handleEditQuestion = (params) => {
     setEditVariable(true);
     setQuestionId(params.id);
     let data = newQuestion;
-    data["question_identifier"] = params.row.question_identifier;
+    data["question_identifier"] = params.row.question_identifier
     data["question_text"] = params.row.question_text;
     data["options"] = params.row.options.split("#");
     let temp = params.row.answers.split("#");
@@ -227,39 +268,18 @@ const AddQuestionsComp = ({ userId }) => {
     setopenModal(true);
   };
   const columns = [
-    // {
-    //   field: "id",
-    //   headerName: "ID",
-    //   width: 80,
-    //   renderCell: (cellValues) => {
-    //     return (
-    //       <IconButton
-    //         onClick={() => {
-    //           clickedIndex === cellValues.value
-    //             ? setClickedIndex(-1)
-    //             : setClickedIndex(cellValues.value);
-    //         }}
-    //       >
-    //         {cellValues.value === clickedIndex ? (
-    //           <KeyboardArrowUpIcon />
-    //         ) : (
-    //           <KeyboardArrowDownIcon />
-    //         )}
-    //       </IconButton>
-    //     );
-    //   },
-    // },
+    
     {
       field: "question_identifier",
-      headerName: "Identifier",
-      width: 150,
+      headerName : "Identifier",
+      width : 150,
       renderCell: (cellValues) => {
-        return (
+        return(
           <Box>
             <div>{cellValues.value}</div>
           </Box>
-        );
-      },
+        )
+      }
     },
     {
       field: "question_text",
@@ -277,7 +297,59 @@ const AddQuestionsComp = ({ userId }) => {
         );
       },
     },
+
+    !selectedQuestions.length && {
+      field: "actions",
+      headerName: "Actions",
+      type: "actions",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <Box>
+            {/* <Tooltip title="View Question Details">
+              <IconButton onClick={() => {}}>
+                <Preview />
+              </IconButton>
+            </Tooltip> */}
+           <Tooltip title="Edit question">
+              <IconButton
+                onClick={() => {
+                  handleEditQuestion(params);
+                }}
+              >
+              <Preview />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete Question">
+              <IconButton
+                onClick={() => {
+                  handleDeleteQuestion([params.id]);
+                }}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        );
+      },
+    },
   ];
+
+  const getQuestion = async () => {
+    const response = await fetch(`http://localhost:3001/posts/quiz/${userId}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    // console.log(data);
+   if(data){
+    setRows(data);
+   }
+  };
+  useEffect(() => {
+    getQuestion();
+  }, []);
+
 
   return (
     <div>
@@ -596,7 +668,8 @@ const AddQuestionsComp = ({ userId }) => {
                 }}
                 slots={{ toolbar: CustomToolbar }}
                 columns={columns}
-                rows={questions}
+                getRowId={(row) => row._id}
+                rows={rows}
                 rowHeight={100}
                 pagination={true}
                 onRowSelectionModelChange={(newRowSelectionModel) => {

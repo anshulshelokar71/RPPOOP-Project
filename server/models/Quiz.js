@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const quizSchema = mongoose.Schema(
   {
     quizId: {
-      type: Object,
+      type: String,
+      required: true,
     },
     questions: [{
       answers: {
@@ -33,6 +34,18 @@ const quizSchema = mongoose.Schema(
         //   required: true,
       },
   }],
+  active: {
+    type: Boolean,
+    default: true // Quiz is not active by default
+  },
+  startTime: {
+    type: Date,
+    default: null // No start time initially
+  },
+  duration: {
+    type: Number,
+    default: 0 // No duration initially
+  }
   },
   { timestamps: true }
 );

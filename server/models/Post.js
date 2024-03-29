@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 const infoSchema = mongoose.Schema(
   {
     infoId: {
-      type:Object,
+      type:String,
       required: true,
+      unique: true,
     },
     
     about: {

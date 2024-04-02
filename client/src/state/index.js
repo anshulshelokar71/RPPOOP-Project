@@ -6,7 +6,6 @@ const initialState = {
   host:null,
   token: null,
   posts: [],
-
 };
 
 export const authSlice = createSlice({

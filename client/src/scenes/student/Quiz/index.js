@@ -85,7 +85,7 @@ const TestComp = ({ quizId }) => {
   // const userContext = useContext(UserTokenContext);
   // const { dict, checkToken } = userContext;
   const { _id, firstName,lastName,mis } = useSelector((state) => state.user);
-  console.log(_id);
+  console.log(quizId);
   const theme = useTheme();
 
   const [questions, setQuestions] = useState([]);
@@ -186,7 +186,7 @@ const TestComp = ({ quizId }) => {
     setUserResponses(updatedResponses);
   };
 
-  const submitResponses = () => {
+  const submitResponses = async() => {
     let userScore = 0;
 
     console.log(questions, userResponses);
@@ -211,6 +211,8 @@ const TestComp = ({ quizId }) => {
     });
 
     setScore(userScore);
+    await storeMarks(userScore);
+    await storeMarksinInfo(userScore);
 
     setCompletionStatus(true);
     //alert("Test Over");
@@ -229,6 +231,57 @@ const TestComp = ({ quizId }) => {
       setQuestionIndex(index);
     }
   };
+
+  const storeMarks = async (score) =>{
+    try {
+      const savedUserResponse = await fetch(
+        `http://localhost:3001/posts/quizMarks/${_id}?param1=${quizId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ marks: score })
+        }
+      );
+  
+      // Check if the request was successful
+      if (savedUserResponse.ok) {
+        console.log("Quiz marks updated successfully");
+      } else {
+        // Handle the case where the request failed
+        console.error("Failed to update quiz marks");
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the process
+      console.error("Error updating quiz marks:", error);
+    }
+  }
+  const storeMarksinInfo = async (score) =>{
+    try {
+      const savedUserResponse = await fetch(
+        `http://localhost:3001/posts/quizMarksInfo/${_id}?param1=${quizId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ marks: score })
+        }
+      );
+  
+      // Check if the request was successful
+      if (savedUserResponse.ok) {
+        console.log("Quiz marks updated successfully");
+      } else {
+        // Handle the case where the request failed
+        console.error("Failed to update quiz marks");
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the process
+      console.error("Error updating quiz marks:", error);
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {

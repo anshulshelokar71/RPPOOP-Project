@@ -20,14 +20,14 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 
 const registerSchema = yup.object().shape({
   Name: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  email: yup.string().matches(/^[a-z]+@coeptech\.ac\.in$/, 'Email must be from coeptech.ac.in domain').required("required"),
+  password: yup.string().matches(/^[a-zA-Z0-9]{6,}$/, 'Password must be alphanumeric and at least 6 characters long').required("required"),
   picture: yup.string().required("required"),
 });
 
 const loginSchema = yup.object().shape({
-  email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  email: yup.string().matches(/^[a-z]+@coeptech\.ac\.in$/, 'Email must be from coeptech.ac.in domain').required("required"),
+  password: yup.string().matches(/^[a-zA-Z0-9]{6,}$/, 'Password must be alphanumeric and at least 6 characters long').required("required"),
 });
 
 const initialValuesRegister = {
@@ -147,7 +147,7 @@ const Form = () => {
                     Boolean(touched.Name) && Boolean(errors.Name)
                   }
                   helperText={touched.Name && errors.Name}
-                  sx={{ gridColumn: "span 1" }}
+                  sx={{ gridColumn: "span 4" }}
                 />
                 {/* <TextField
                   label="Last Name"

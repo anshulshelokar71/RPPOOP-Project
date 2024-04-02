@@ -90,7 +90,7 @@ export default function Landing() {
         "Aerial Robot Study Circle",
         "Data Science & AI",
         "COFSUG",
-        "Civil Services Aspirent Club",
+        "Civil Services Aspirant Club",
         "ZEST",
         "MINDSPARK",
         "PSF",
@@ -192,7 +192,6 @@ export default function Landing() {
                 {["Host", "Student"].map((value) => (
                   <Grid item key={value}>
                     <Button size="large" variant="contained"onClick={()=>handleClick(value)}>{value}</Button>
-                   
                   </Grid>
                 ))}
               </Grid>

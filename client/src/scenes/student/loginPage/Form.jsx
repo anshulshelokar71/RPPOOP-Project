@@ -22,14 +22,18 @@ const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
   mis: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  email: yup.string().email("invalid email").required("required").test('custom-validation', 'Invalid email format', function(email) {
+    const { firstName, lastName } = this.parent;
+    const expectedEmailRegex = new RegExp(`${lastName.toLowerCase()}${firstName.charAt(0).toLowerCase()}[a-z]{1}[0-9]{2}\\.[a-z]{4}@coeptech\\.ac\\.in`);
+    return expectedEmailRegex.test(email);
+  }),
+  password: yup.string().matches(/^[a-zA-Z0-9]{6,}$/, 'Password must be alphanumeric and at least 6 characters long').required("required"),
   picture: yup.string().required("required"),
 });
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  password: yup.string().matches(/^[a-zA-Z0-9]{6,}$/, 'Password must be alphanumeric and at least 6 characters long').required("required"),
 });
 
 const initialValuesRegister = {

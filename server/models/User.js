@@ -35,6 +35,10 @@ const StudentSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    marks:{
+      type:Number,
+      default: 0,
+    }
   },
   { timestamps: true }
 );

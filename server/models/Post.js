@@ -6,6 +6,9 @@ const infoSchema = mongoose.Schema(
       type:String,
       required: true,
       unique: true,
+    }, name: {
+      type: String,
+      required: true,
     },
     
     about: {

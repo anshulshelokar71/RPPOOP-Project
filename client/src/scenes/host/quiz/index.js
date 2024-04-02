@@ -13,6 +13,7 @@ import {
   Stack,
   Container,
   Tooltip,
+  Modal,
 } from "@mui/material";
 import {
   DataGrid,
@@ -82,6 +83,7 @@ const AddQuestionsComp = ({ userId }) => {
   const [editVariable, setEditVariable] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [openModal, setopenModal] = useState(false);
+ 
   const [questionId, setQuestionId] = useState("");
   const [loadingFlag, setLoadingFlag] = useState(true);
   const [error, setError] = useState(false);
@@ -157,7 +159,9 @@ const AddQuestionsComp = ({ userId }) => {
       answers: updatedanswerss,
     }));
   };
- 
+  function getRowId(row) {
+    return row.internalId;
+  }
 
   const handleAddQuestion = async () => {
     if (!newQuestion.question_text || !newQuestion.question_identifier) {
@@ -199,63 +203,73 @@ const AddQuestionsComp = ({ userId }) => {
             "Content-Type": "application/json"
           },
           body: JSON.stringify(quizData)
-          
         }
       );
       const savedUser = await savedUserResponse.json();
       // onSubmitProps.resetForm();
-        console.log(savedUser)
+      console.log(savedUser);
       if (savedUser) {
         console.log("quiz stored succesfully");
         alert("Updated");
         window.location.reload();
+        // handleCloseModal();
       }
     } else {
       alert("Please select at least one correct answer.");
     }
   };
 
-  const handleDeleteQuestion = async(question_ids) => {
+  const handleDeleteQuestion = async (question_ids) => {
+    console.log(question_ids);
     const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'You are about to delete this question. This action cannot be undone.',
-      icon: 'warning',
+      title: "Are you sure?",
+      text:
+        "You are about to delete this question. This action cannot be undone.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      customClass: {
+        container: 'my-swal'
+    }
     });
     if (result.isConfirmed) {
       try {
-
-        const response = await fetch(`http://localhost:3001/posts/quiz/${userId}/deleteQuestion`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json' // Specify the content type
-          },
-          body:JSON.stringify(question_ids),
-        });
+        const response = await fetch(
+          `http://localhost:3001/posts/quiz/${userId}/deleteQuestion`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json", // Specify the content type
+            },
+            body: JSON.stringify(question_ids),
+          }
+        );
         if (response.ok) {
           // If question deleted successfully, show success message
-          await Swal.fire('Success!', 'Question deleted successfully.', 'success');
+          await Swal.fire(
+            "Success!",
+            "Question deleted successfully.",
+            "success"
+          );
         } else {
           // If there was an error deleting the question, show error message
-          Swal.fire('Error!', 'Failed to delete question.', 'error');
+          Swal.fire("Error!", "Failed to delete question.", "error");
         }
         window.location.reload();
       } catch (error) {
-        console.error('Error deleting question:', error);
-        Swal.fire('Error!', 'Failed to delete question.', 'error');
+        console.error("Error deleting question:", error);
+        Swal.fire("Error!", "Failed to delete question.", "error");
       }
     }
-    
   };
 
   const handleEditQuestion = (params) => {
     setEditVariable(true);
     setQuestionId(params.id);
     let data = newQuestion;
-    data["question_identifier"] = params.row.question_identifier
+    data["question_identifier"] = params.row.question_identifier;
     data["question_text"] = params.row.question_text;
     data["options"] = params.row.options.split("#");
     let temp = params.row.answers.split("#");
@@ -268,18 +282,17 @@ const AddQuestionsComp = ({ userId }) => {
     setopenModal(true);
   };
   const columns = [
-    
     {
       field: "question_identifier",
-      headerName : "Identifier",
-      width : 150,
+      headerName: "Identifier",
+      width: 150,
       renderCell: (cellValues) => {
-        return(
+        return (
           <Box>
             <div>{cellValues.value}</div>
           </Box>
-        )
-      }
+        );
+      },
     },
     {
       field: "question_text",
@@ -311,15 +324,15 @@ const AddQuestionsComp = ({ userId }) => {
                 <Preview />
               </IconButton>
             </Tooltip> */}
-           <Tooltip title="Edit question">
+            {/* <Tooltip title="Edit question">
               <IconButton
                 onClick={() => {
                   handleEditQuestion(params);
                 }}
               >
-              <Preview />
+                <Preview />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
             <Tooltip title="Delete Question">
               <IconButton
                 onClick={() => {
@@ -342,14 +355,13 @@ const AddQuestionsComp = ({ userId }) => {
     });
     const data = await response.json();
     // console.log(data);
-   if(data){
-    setRows(data);
-   }
+    if (data) {
+      setRows(data);
+    }
   };
   useEffect(() => {
     getQuestion();
   }, []);
-
 
   return (
     <div>
@@ -360,19 +372,38 @@ const AddQuestionsComp = ({ userId }) => {
           justifyContent="space-between"
           mb={1}
         >
-          <Typography
-            fontWeight="bold"
-            fontSize="clamp(1rem, 2rem, 2.25rem)"
-            color="primary"
-            sx={{
-              "&:hover": {
-                color: primaryLight,
-                cursor: "pointer",
-              },
-            }}
-          >
-            Question
-          </Typography>
+          <div>
+            <Typography
+              fontWeight="bold"
+              fontSize="clamp(1rem, 2rem, 2.25rem)"
+              color="primary"
+              sx={{
+                "&:hover": {
+                  color: primaryLight,
+                  cursor: "pointer",
+                },
+              }}
+            >
+              Question
+            </Typography>
+          </div>
+          <div>
+            <LoadingButton
+              fullWidth
+              size="large"
+              variant="contained"
+              color="primary"
+              sx={{
+                "&:hover": {
+                  color: primaryLight,
+                  cursor: "pointer",
+                },
+              }}
+            >
+              Add Timer
+            </LoadingButton>
+          </div>
+          {/* <Modal open={open1} onClose={handleClose1}></Modal> */}
         </Stack>
         <Grid
           container
@@ -389,7 +420,7 @@ const AddQuestionsComp = ({ userId }) => {
               size="large"
               type="submit"
               variant="contained"
-            color="primary"
+              color="primary"
               sx={{
                 "&:hover": {
                   color: primaryLight,
@@ -415,12 +446,17 @@ const AddQuestionsComp = ({ userId }) => {
                     position: "absolute",
                     right: 8,
                     top: 8,
-                    color:"black"
+                    color: "black",
                   }}
                 >
                   <CloseIcon />
                 </IconButton>
-            <Typography variant="h3" fontWeight="bold" color="black" component="div">
+                <Typography
+                  variant="h3"
+                  fontWeight="bold"
+                  color="black"
+                  component="div"
+                >
                   {editVariable ? "Edit Question" : "Add Question"}
                 </Typography>
               </Toolbar>

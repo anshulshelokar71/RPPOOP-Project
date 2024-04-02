@@ -11,27 +11,69 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@emotion/react";
-import { DataGrid } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridToolbar,
+  GridToolbarColumnsButton,
+  GridToolbarDensitySelector,
+  GridToolbarExport,
+  GridToolbarFilterButton,
+  GridToolbarContainer,
+} from "@mui/x-data-grid";
 
+
+
+function CustomToolbar() {
+  const handleEmail = () =>{
+
+  }
+
+  
+  return (
+    <GridToolbarContainer
+      sx={{ backgroundColor: "#00A0BC", borderRadius: "11px 11px 0 0" }}
+    >
+      <GridToolbarColumnsButton
+        style={{ color: "#FFFFFF", fontSize: "1.2rem" }}
+      />
+      <GridToolbarFilterButton
+        style={{ color: "#FFFFFF", fontSize: "1.2rem" }}
+      />
+      <GridToolbarDensitySelector
+        style={{ color: "#FFFFFF", fontSize: "1.2rem" }}
+      />
+      <GridToolbarExport style={{ color: "#FFFFFF", fontSize: "1.2rem" }} />
+      
+    </GridToolbarContainer>
+  );
+}
+
+function getRowId(row) {
+  return row.internalId;
+}
 // import PostWidget from "./PostWidget";
 const HostsWidget = ({userId,name}) => {
+  console.log(userId);
   const theme = useTheme();
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
   const [rows, setRows] = useState([]);
+  const [selectedOrganizations, setSelectedOrganizations] = useState([]);
 
-  function filterByID(item) {
-    console.log(userId);
-    console.log(item.infoId);
-    if (item.infoId&&Object.values(item.infoId)[0]===userId && item.infoId !== 0) {
-      return true;
-    }
-    return false;
-  }
-
+  const handleSendEmails = () => {
+    const selectedEmails = selectedOrganizations.map((id) => {
+      const selectedStudent = posts.find((post) => post.userId === id);
+      return selectedStudent ? selectedStudent.email : null;
+    });
+    console.log("Selected Emails:", selectedEmails);
+    
+    const emailList = selectedEmails.join(",");
+    window.open(`mailto:${emailList}`);
+  };
+  
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
+    // { field: 'userId', headerName: 'ID', width: 90 },
     {
       field: 'userName',
       headerName: 'Student name',
@@ -44,55 +86,40 @@ const HostsWidget = ({userId,name}) => {
       width: 150,
       editable: true,
     },
+    {
+      field: "email", // Assuming email field is present in row data
+      headerName: "Email",
+      width: 300,
+      editable: true,
+    },
+    {
+      field: 'marks',
+      headerName: 'Marks',
+      width: 90,
+      editable: true,
+    },
   ];
-  function getRowId(row) {
-    return row.internalId;
-  }
-
-  // const rows = [
-  //   { id: 1, userName: 'Snow', mis: 14 },
-  //   { id: 2, userName: 'Lannister', mis: 31 },
-  //   { id: 3, userName: 'Lannister', mis: 31 },
-  //   { id: 4, userName: 'Stark', mis: 11 },
-  //   { id: 5, userName: 'Targaryen', mis: null },
-  //   { id: 6, userName: 'Melisandre', mis: 150 },
-  //   { id: 7, userName: 'Clifford', mis: 44 },
-  //   { id: 8, userName: 'Frances', mis: 36 },
-  //   { id: 9, userName: 'Roxie', mis: 65 },
-  // ];
-  // console.log(name);
-  const getPosts = async () => {
-    const response = await fetch("http://localhost:3001/posts", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await response.json();
-    const arrByID = data.filter(filterByID);
-    dispatch(setPosts({ posts: arrByID }));
-    // console.log(posts);
-    if(posts[0])
-    setRows(posts[0].registrations);
-    console.log(rows);
-  };
-
-
-
-  //   const getUserPosts = async () => {
-  //     const response = await fetch(
-  //       `http://localhost:3001/posts/${userId}/posts`,
-  //       {
-  //         method: "GET",
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     );
-  //     const data = await response.json();
-  //     dispatch(setPosts({ posts: data }));
-  //   };
+    const getUserPosts = async () => {
+      const response = await fetch(
+        `http://localhost:3001/posts/getStudents/${userId}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await response.json();
+      dispatch(setPosts({ posts: data }));
+      if(posts[0]){
+        setRows(posts);
+      }
+      console.log(posts);
+    };
 
   useEffect(() => {
-    getPosts();
+    getUserPosts();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  
 
   return (
 
@@ -102,6 +129,13 @@ const HostsWidget = ({userId,name}) => {
       getRowId={(row) => row.userId}
         rows={rows}
         columns={columns}
+        slots={{
+          toolbar: CustomToolbar
+        }}
+        onRowSelectionModelChange={(newRowSelectionModel) => {
+          setSelectedOrganizations(newRowSelectionModel);
+        }}
+        rowSelectionModel={selectedOrganizations}
         initialState={{
           pagination: {
             paginationModel: {
@@ -114,12 +148,14 @@ const HostsWidget = ({userId,name}) => {
         disableRowSelectionOnClick
       />
     </Box>
-   
-      {/* {console.log(posts[0].registrations)} */}
-   {/* {posts[0].registrations&&posts[0].registrations.map((ele)=>(<><p>{ele.mis}</p><p>{ele.userName}</p></>))} */}
-  
-   
-    
+    <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSendEmails}
+        // disabled={selectedRows.length === 0}
+      >
+        Send Emails
+      </Button>
     </>
   )
 

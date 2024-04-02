@@ -34,8 +34,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const [isEnrolled,setIsEnrolled] = useState(false);
   const dispatch = useDispatch();
+  const {email} = useSelector((state)=> state.user);
+  // console.log(email);
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
   const [open, setOpen] = React.useState(false);
@@ -43,7 +44,6 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
 
 
   const handleClickOpen = (props) => {
-    // console.log(props);
     setOpen(true);
     setKey(props);
   };
@@ -52,20 +52,21 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
     setOpen(false);
   };
   
-  console.log(typeof(userId));
   const getPosts = async () => {
     const response = await fetch("http://localhost:3001/posts", {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await response.json();
+    if(data[0])
     dispatch(setPosts({ posts: data }));
+  else
+    dispatch(setPosts({posts:[]}));
   };
 
   
 
   const enrolStudent = async (props) => {
-    console.log(userId)
     const response = await fetch(`http://localhost:3001/posts/update`, {
       method: "PATCH",
       headers: {   Authorization: `Bearer ${token}`
@@ -75,7 +76,8 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
         studentsReg:{
           userId,
           userName,
-          mis
+          mis,
+          email
         }
       })
     });
@@ -94,7 +96,7 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
 
   return (
     <>
-      {posts.map(({ _id,infoId, name, about, date, contact }) => (
+      {Array.isArray(posts) && posts.length!==0?(posts.map(({ _id,infoId, name, about, date, contact }) => (
         <Card sx={{ minWidth: 275, mb: 6 }} key={_id}>
           <CardContent>
             <Typography sx={{ fontSize: 20 }} color="primary" gutterBottom>
@@ -113,9 +115,13 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button size="small" key={_id} onClick={()=>enrolStudent({_id})}>{posts.find(post => post._id === _id)?.registrations.find(registration => registration.userId === userId)?("UNENROLL"):("ENROLL")}</Button>
+            <Button size="small" key={_id} onClick={()=>enrolStudent({_id})}>{posts &&
+    posts.find(post => post._id === _id)?.registrations &&
+    posts.find(post => post._id === _id).registrations.find(registration => registration.userId === userId) ?
+    "UNENROLL" :
+    "ENROLL"}</Button>
             <Button variant="outlined" key={userId} onClick={()=>handleClickOpen(infoId)}>
-        Open full-screen dialog
+        Attempt Quiz
       </Button>
       {key&&<Dialog
         fullScreen
@@ -147,7 +153,7 @@ const PostsWidget = ({ userId, userName,mis,isProfile = false }) => {
       </Dialog> }         
           </CardActions>
         </Card>
-      ))}
+      ))):(<div><h2>It seems your Feeds are Empty!!!</h2><h4>Nothing to show...</h4></div>)}
     </>
   );
 };

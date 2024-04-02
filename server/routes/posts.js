@@ -1,5 +1,5 @@
 import express from "express";
-import { getFeedPosts,getQuiz,update,getQuizUser} from "../controllers/posts.js";
+import { getFeedPosts,getQuiz,update,getQuizUser,getUserPosts} from "../controllers/posts.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", getFeedPosts);
 router.get("/quiz/:id",verifyToken,getQuiz);
 router.get("/getQuiz/:id",verifyToken,getQuizUser)
-// router.get("/:userId/posts", verifyToken, getUserPosts);
+router.get("/getStudents/:id", verifyToken, getUserPosts);
 
 // /* UPDATE */
 router.patch("/update",verifyToken, update);

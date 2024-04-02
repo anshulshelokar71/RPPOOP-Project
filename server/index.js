@@ -13,7 +13,7 @@ import userRoutes from "./routes/users.js";
 import hostRoutes from "./routes/host.js";
 import postRoutes from "./routes/posts.js";
 import { register,registerHost } from "./controllers/auth.js";
-import { infographics, quiz,deleteQuestion } from "./controllers/posts.js";
+import { infographics, quiz,deleteQuestion,addMarks,addMarksInfo,deleteQuiz, deleteInfo } from "./controllers/posts.js";
 import { verifyToken } from "./middleware/auth.js";
 import Student from "./models/User.js";
 import Host from "./models/Host.js";
@@ -51,8 +51,11 @@ app.post("/auth/register", upload.single("picture"), register);
 app.post("/auth/registerHost", upload.single("picture"), registerHost);
 app.post("/posts/:id", infographics);
 app.put("/posts/quiz/:id", quiz);
+app.put("/posts/quizMarks/:id", addMarks);
+app.put("/posts/quizMarksInfo/:id",addMarksInfo)
 app.delete("/posts/quiz/:id/deleteQuestion",deleteQuestion);
-
+app.delete("/posts/quiz/:id/deleteQuiz",deleteQuiz);
+app.delete("/posts/quiz/:id/deleteInfo",deleteInfo);
 
 /* ROUTES */
 app.use("/auth", authRoutes);

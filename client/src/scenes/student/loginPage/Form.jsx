@@ -7,6 +7,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { BACKEND_URL } from "config";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -21,7 +22,7 @@ import Swal from "sweetalert2";
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
-  mis: yup.string().required("required"),
+  mis: yup.string().matches(/^\d{9}$/, "MIS must contain exactly 9 numbers").required("required"),
   email: yup.string().email("invalid email").required("required").test('custom-validation', 'Invalid email format', function(email) {
     const { firstName, lastName } = this.parent;
     const expectedEmailRegex = new RegExp(`${lastName.toLowerCase()}${firstName.charAt(0).toLowerCase()}[a-z]{1}[0-9]{2}\\.[a-z]{4}@coeptech\\.ac\\.in`);
@@ -68,7 +69,7 @@ const Form = () => {
     formData.append("picturePath", values.picture.name);
 
     const savedUserResponse = await fetch(
-      "http://localhost:3001/auth/register",
+      `${BACKEND_URL}/auth/register`,
       {
         method: "POST",
         body: formData,
@@ -89,7 +90,7 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
+    const loggedInResponse = await fetch(`${BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),

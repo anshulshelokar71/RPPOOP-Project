@@ -11,6 +11,7 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@emotion/react";
+import { BACKEND_URL } from "config";
 import {
   DataGrid,
   GridToolbar,
@@ -31,7 +32,7 @@ function CustomToolbar() {
   
   return (
     <GridToolbarContainer
-      sx={{ backgroundColor: "#00A0BC", borderRadius: "11px 11px 0 0" }}
+      sx={{ backgroundColor: "#00A0BC", borderRadius: "4px 4px 0 0" }}
     >
       <GridToolbarColumnsButton
         style={{ color: "#FFFFFF", fontSize: "1.2rem" }}
@@ -101,7 +102,7 @@ const HostsWidget = ({userId,name}) => {
   ];
     const getUserPosts = async () => {
       const response = await fetch(
-        `http://localhost:3001/posts/getStudents/${userId}`,
+        `${BACKEND_URL}/posts/getStudents/${userId}`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
@@ -126,7 +127,7 @@ const HostsWidget = ({userId,name}) => {
     <>
     <Box sx={{ height: 400, width: '70%' }}>
       <DataGrid
-      getRowId={(row) => row.userId}
+      getRowId={(row) => row.userId? row.userId:row._id}
         rows={rows}
         columns={columns}
         slots={{

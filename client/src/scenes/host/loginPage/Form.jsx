@@ -16,7 +16,7 @@ import { setLoginHost } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-
+import { BACKEND_URL } from "config";
 
 const registerSchema = yup.object().shape({
   Name: yup.string().required("required"),
@@ -60,7 +60,7 @@ const Form = () => {
     formData.append("picturePath", values.picture.name);
     
     const savedUserResponse = await fetch(
-      "http://localhost:3001/auth/registerHost",
+      `${BACKEND_URL}/auth/registerHost`,
       {
         method: "POST",
         body: formData,
@@ -81,7 +81,7 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:3001/auth/loginHost", {
+    const loggedInResponse = await fetch(`${BACKEND_URL}/auth/loginHost`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),

@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import '../../../App.css';
+import { BACKEND_URL } from "config";
 import {
   Box,
   Button,
@@ -196,7 +198,7 @@ const AddQuestionsComp = ({ userId }) => {
       // let updatedQuestions = [...questions, data];
       // console.log(quizData);
       const savedUserResponse = await fetch(
-        `http://localhost:3001/posts/quiz/${userId}`,
+        `${BACKEND_URL}/posts/quiz/${userId}`,
         {
           method: "PUT",
           headers: {
@@ -231,13 +233,13 @@ const AddQuestionsComp = ({ userId }) => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
       customClass: {
-        container: 'my-swal'
+        popup: 'my-swal-popup' // Apply styles to the dialog popup
     }
     });
     if (result.isConfirmed) {
       try {
         const response = await fetch(
-          `http://localhost:3001/posts/quiz/${userId}/deleteQuestion`,
+          `${BACKEND_URL}/posts/quiz/${userId}/deleteQuestion`,
           {
             method: "DELETE",
             headers: {
@@ -263,6 +265,14 @@ const AddQuestionsComp = ({ userId }) => {
         Swal.fire("Error!", "Failed to delete question.", "error");
       }
     }
+    const style = document.createElement('style');
+    style.textContent = `
+        .my-swal-popup {
+            z-index: 385893 !important; /* Adjust z-index as needed */
+            /* Add any other styles you want */
+        }
+    `;
+    document.head.appendChild(style);
   };
 
   const handleEditQuestion = (params) => {
@@ -324,7 +334,7 @@ const AddQuestionsComp = ({ userId }) => {
                 <Preview />
               </IconButton>
             </Tooltip> */}
-            {/* <Tooltip title="Edit question">
+            <Tooltip title="Edit question">
               <IconButton
                 onClick={() => {
                   handleEditQuestion(params);
@@ -332,7 +342,7 @@ const AddQuestionsComp = ({ userId }) => {
               >
                 <Preview />
               </IconButton>
-            </Tooltip> */}
+            </Tooltip>
             <Tooltip title="Delete Question">
               <IconButton
                 onClick={() => {
@@ -349,7 +359,7 @@ const AddQuestionsComp = ({ userId }) => {
   ];
 
   const getQuestion = async () => {
-    const response = await fetch(`http://localhost:3001/posts/quiz/${userId}`, {
+    const response = await fetch(`${BACKEND_URL}/posts/quiz/${userId}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -387,7 +397,7 @@ const AddQuestionsComp = ({ userId }) => {
               Question
             </Typography>
           </div>
-          <div>
+          {/* <div>
             <LoadingButton
               fullWidth
               size="large"
@@ -401,8 +411,8 @@ const AddQuestionsComp = ({ userId }) => {
               }}
             >
               Add Timer
-            </LoadingButton>
-          </div>
+            </LoadingButton> */}
+          {/* </div> */}
           {/* <Modal open={open1} onClose={handleClose1}></Modal> */}
         </Stack>
         <Grid

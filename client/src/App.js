@@ -13,6 +13,7 @@ import LoginPageHost from "scenes/host/loginPage";
 import { Dashboard } from "scenes/host/Dashboard/index";
 import AddQuestionsComp from "scenes/host/quiz";
 import TestComp from "scenes/student/Quiz";
+import { ClubsInfo } from "scenes/widgets/ClubsInfo";
 // import HomePageHost from "scenes/host/Dashboard/index";
 
 
@@ -39,6 +40,10 @@ function App() {
               <Route
                 path="/profile/:userId"
                 element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/clubsInfo"
+                element={isAuth ? <ClubsInfo/> : <Navigate to="/" />}
               />
           </Routes>
         </ThemeProvider>

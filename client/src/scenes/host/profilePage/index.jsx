@@ -7,6 +7,7 @@ import Navbar from "scenes/student/navbar";
 // import MyPostWidget from "scenes/widgets/MyPostWidget";
 // import PostsWidget from "scenes/widgets/PostsWidget";
 import HostWidget from "scenes/widgets/HostsWidget";
+import { BACKEND_URL } from "config";
 
 const ProfilePageHost = () => {
   const [host, setHost] = useState(null);
@@ -15,7 +16,7 @@ const ProfilePageHost = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
   const getHost = async () => {
-    const response = await fetch(`http://localhost:3001/users/${hostId}`, {
+    const response = await fetch(`${BACKEND_URL}/users/${hostId}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });

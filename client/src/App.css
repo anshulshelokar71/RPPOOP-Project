@@ -32,8 +32,8 @@
     height: 100%;
     width: 100%;
     filter: brightness(35%);
-  } */ */
+  } */ 
 
-  .my-swal {
-    z-index: 2147483600;
+.my-swal{
+  z-index: 2789089 !important;
 }

@@ -4,15 +4,17 @@ import {
   LocationOnOutlined,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
-import { Box, Typography, Divider, useTheme } from "@mui/material";
+import { Box, Typography, Divider, useTheme, Button } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BACKEND_URL } from "config";
 
 const UserWidget = ({ userId, picturePath }) => {
+  // const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { palette } = useTheme();
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const UserWidget = ({ userId, picturePath }) => {
   const main = palette.neutral.main;
 
   const getUser = async () => {
-    const response = await fetch(`http://localhost:3001/users/${userId}`, {
+    const response = await fetch(`${BACKEND_URL}/users/${userId}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -111,10 +113,12 @@ const UserWidget = ({ userId, picturePath }) => {
       {/* FOURTH ROW */}
       <Box p="1rem 0">
         <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
-          Social Profiles
+          Clubs/Fests in COEP
         </Typography>
 
-        <FlexBetween gap="1rem" mb="0.5rem">
+        <Button onClick={() => navigate(`/clubsInfo`)}>Click Here</Button>
+
+        {/* <FlexBetween gap="1rem" mb="0.5rem">
           <FlexBetween gap="1rem">
             <img src="../assets/twitter.png" alt="twitter" />
             <Box>
@@ -138,7 +142,7 @@ const UserWidget = ({ userId, picturePath }) => {
             </Box>
           </FlexBetween>
           <EditOutlined sx={{ color: main }} />
-        </FlexBetween>
+        </FlexBetween> */}
       </Box>
     </WidgetWrapper>
   );

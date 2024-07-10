@@ -31,6 +31,7 @@ import Swal from "sweetalert2";
 // import Certificate from "../Certificate/certificate";
 import { useNavigate } from "react-router-dom";
 import { Stack } from "@mui/material";
+import { BACKEND_URL } from "config";
 // import UserTokenContext from "../../context/UserTokenContext";
 // import { fDate } from "../../utils/formatTime";
 // import LoadingPage from "../../pages/LoadingPage";
@@ -84,7 +85,7 @@ const TestComp = ({ quizId }) => {
   // const location = useLocation();
   // const userContext = useContext(UserTokenContext);
   // const { dict, checkToken } = userContext;
-  const { _id, firstName,lastName,mis } = useSelector((state) => state.user);
+  const { _id, firstName, lastName, mis } = useSelector((state) => state.user);
   console.log(quizId);
   const theme = useTheme();
 
@@ -124,39 +125,46 @@ const TestComp = ({ quizId }) => {
     setFeedbackMessage(target.value);
   };
 
-  // const handleFeedback = async () => {
-  //   // TODO Check the Empty fields and Rating Should not be empty
+  const handleFeedback = async () => {
+    await Swal.fire({
+      title: "SUCCESS",
+      icon: "success",
+      showConfirmButton: true,
+      // text: res.data.message,
+    });
+    window.reload();
+    //   // TODO Check the Empty fields and Rating Should not be empty
 
-  //   let l = [feedbackVal1, feedbackVal2, feedbackVal3];
+    //   let l = [feedbackVal1, feedbackVal2, feedbackVal3];
 
-  //   const body = {
-  //     video_id: location.state.video_id,
-  //     training_id: location.state.training_id,
-  //     rating: l.join("#"),
-  //     feedback_message: feedbackMessage,
-  //   };
-  //   axios
-  //     .post(backendURL + "/user/feedback", body, {
-  //       headers: {
-  //         "lms-sybernow": localStorage.getItem("lms-sybernow"),
-  //       },
-  //     })
-  //     .then((res) => {
-  //       if ("message" in res.data) {
-  //         Swal.fire({
-  //           title: "SUCCESS",
-  //           icon: "success",
-  //           showConfirmButton: true,
-  //           text: res.data.message,
-  //         });
-  //         navigate("/dashboard/app");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log("Error Code: ", error.response.status);
-  //       navigate("/lms/404");
-  //     });
-  // };
+    //   const body = {
+    //     video_id: location.state.video_id,
+    //     training_id: location.state.training_id,
+    //     rating: l.join("#"),
+    //     feedback_message: feedbackMessage,
+    //   };
+    //   axios
+    //     .post(backendURL + "/user/feedback", body, {
+    //       headers: {
+    //         "lms-sybernow": localStorage.getItem("lms-sybernow"),
+    //       },
+    //     })
+    //     .then((res) => {
+    //       if ("message" in res.data) {
+    //         Swal.fire({
+    //           title: "SUCCESS",
+    //           icon: "success",
+    //           showConfirmButton: true,
+    //           text: res.data.message,
+    //         });
+    //         navigate("/dashboard/app");
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log("Error Code: ", error.response.status);
+    //       navigate("/lms/404");
+    //     });
+  };
 
   const navigate = useNavigate();
 
@@ -186,7 +194,7 @@ const TestComp = ({ quizId }) => {
     setUserResponses(updatedResponses);
   };
 
-  const submitResponses = async() => {
+  const submitResponses = async () => {
     let userScore = 0;
 
     console.log(questions, userResponses);
@@ -232,19 +240,19 @@ const TestComp = ({ quizId }) => {
     }
   };
 
-  const storeMarks = async (score) =>{
+  const storeMarks = async (score) => {
     try {
       const savedUserResponse = await fetch(
-        `http://localhost:3001/posts/quizMarks/${_id}?param1=${quizId}`,
+        `${BACKEND_URL}/posts/quizMarks/${_id}?param1=${quizId}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ marks: score })
+          body: JSON.stringify({ marks: score }),
         }
       );
-  
+
       // Check if the request was successful
       if (savedUserResponse.ok) {
         console.log("Quiz marks updated successfully");
@@ -256,20 +264,20 @@ const TestComp = ({ quizId }) => {
       // Handle any errors that occurred during the process
       console.error("Error updating quiz marks:", error);
     }
-  }
-  const storeMarksinInfo = async (score) =>{
+  };
+  const storeMarksinInfo = async (score) => {
     try {
       const savedUserResponse = await fetch(
-        `http://localhost:3001/posts/quizMarksInfo/${_id}?param1=${quizId}`,
+        `${BACKEND_URL}/posts/quizMarksInfo/${_id}?param1=${quizId}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ marks: score })
+          body: JSON.stringify({ marks: score }),
         }
       );
-  
+
       // Check if the request was successful
       if (savedUserResponse.ok) {
         console.log("Quiz marks updated successfully");
@@ -281,49 +289,49 @@ const TestComp = ({ quizId }) => {
       // Handle any errors that occurred during the process
       console.error("Error updating quiz marks:", error);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:3001/posts/getQuiz/${_id}?param1=${quizId}`,
-            {
-              method: "GET",
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+      try {
+        const response = await fetch(
+          `${BACKEND_URL}/posts/getQuiz/${_id}?param1=${quizId}`,
+          {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         //   const data = await response.json();
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch questions");
-          }
-
-          const data = await response.json();
-          console.log(data);
-          let temp = data.questions;
-          let responseArray = [];
-
-          for (let index = 0; index < temp.length; index++) {
-            data.questions[index].options = temp[index].options.split("#");
-            data.questions[index].answers = temp[index].answers.split("#");
-            for (let j = 0; j < data.questions[index].answers.length; j++) {
-              data.questions[index].answers[j] =
-                data.questions[index].answers[j] === "true";
-            }
-            responseArray.push(
-              new Array(data.questions[index].answers.length).fill(false)
-            );
-          }
-
-          setQuestions(data.questions);
-          console.log(questions);
-          setUserResponses(responseArray);
-        } catch (error) {
-          console.error("Error fetching questions:", error);
-          // Handle error (e.g., show error message)
+        if (!response.ok) {
+          throw new Error("Failed to fetch questions");
         }
-    //   }
+
+        const data = await response.json();
+        console.log(data);
+        let temp = data.questions;
+        let responseArray = [];
+
+        for (let index = 0; index < temp.length; index++) {
+          data.questions[index].options = temp[index].options.split("#");
+          data.questions[index].answers = temp[index].answers.split("#");
+          for (let j = 0; j < data.questions[index].answers.length; j++) {
+            data.questions[index].answers[j] =
+              data.questions[index].answers[j] === "true";
+          }
+          responseArray.push(
+            new Array(data.questions[index].answers.length).fill(false)
+          );
+        }
+
+        setQuestions(data.questions);
+        console.log(questions);
+        setUserResponses(responseArray);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+        // Handle error (e.g., show error message)
+      }
+      //   }
     };
 
     fetchData();
@@ -439,10 +447,10 @@ const TestComp = ({ quizId }) => {
                     align="center"
                     style={{ color: "white" }}
                   >
-                    Feedback
+                    Thanks For Attempting the Quiz!!!
                   </Typography>
                   <br />
-                  <Typography
+                  {/* <Typography
                     variant="h4"
                     align="center"
                     style={{ color: "white" }}
@@ -474,7 +482,7 @@ const TestComp = ({ quizId }) => {
                         component="fieldset"
                         borderColor="transparent"
                         mt={1}
-                      >
+                      > */}
                         {/* <StyledRating
                             name="feedback1"
                             value={feedbackVal1}
@@ -487,11 +495,11 @@ const TestComp = ({ quizId }) => {
                             //   setratingStar(newHover);
                             // }}
                           /> */}
-                      </Box>
+                      {/* </Box>
                       <Typography variant="h6" style={{ color: "white" }}>
                         (Waiting for next one!)
-                      </Typography>
-                    </Grid>
+                      </Typography> */}
+                    {/* </Grid>
 
                     <Grid container spacing={2} mt={1} alignItems="center">
                       <Typography
@@ -509,7 +517,7 @@ const TestComp = ({ quizId }) => {
                         component="fieldset"
                         borderColor="transparent"
                         mt={1}
-                      >
+                      > */}
                         {/* <StyledRating
                             name="feedback2"
                             value={feedbackVal2}
@@ -522,7 +530,7 @@ const TestComp = ({ quizId }) => {
                             //   setratingStar(newHover);
                             // }}
                           /> */}
-                      </Box>
+                      {/* </Box>
                       <Typography variant="h6" style={{ color: "white" }}>
                         (Enlightened)
                       </Typography>
@@ -543,7 +551,7 @@ const TestComp = ({ quizId }) => {
                         component="fieldset"
                         borderColor="transparent"
                         mt={1}
-                      >
+                      > */}
                         {/* <StyledRating
                             name="feedback3"
                             value={feedbackVal3}
@@ -556,32 +564,32 @@ const TestComp = ({ quizId }) => {
                             //   setratingStar(newHover);
                             // }}
                           /> */}
-                      </Box>
+                      {/* </Box>
                       <Typography variant="h6" style={{ color: "white" }}>
                         (Wow!)
                       </Typography>
                     </Grid>
                   </Grid>
 
-                  {/* <CssTextField
-                      name="feedback_message"
-                      required
-                      fullWidth
-                      multiline
-                      rows={5}
-                      id="feedback_message"
-                      label="Feedback"
-                      value={feedbackMessage}
-                      placeholder="Your feedback on this topic will help us improve"
-                      helperText={
-                        err && !feedbackMessage
-                          ? "Feedback Message is required"
-                          : ""
-                      }
-                      error={!feedbackMessage}
-                      onChange={handleOnChangeData}
-                      mb={2}
-                    /> */}
+                  <CssTextField
+                    name="feedback_message"
+                    required
+                    fullWidth
+                    multiline
+                    rows={5}
+                    id="feedback_message"
+                    label="Feedback"
+                    value={feedbackMessage}
+                    placeholder="Your feedback on this topic will help us improve"
+                    helperText={
+                      err && !feedbackMessage
+                        ? "Feedback Message is required"
+                        : ""
+                    }
+                    error={!feedbackMessage}
+                    onChange={handleOnChangeData}
+                    mb={2}
+                  />
 
                   <Grid
                     container
@@ -597,12 +605,12 @@ const TestComp = ({ quizId }) => {
                         variant="containedInherit"
                         sx={{ marginRight: 2 }}
                         component="span"
-                        //   onClick={handleFeedback}
+                        onClick={handleFeedback}
                       >
                         Submit Feedback
                       </Button>
                     </Grid>
-                  </Grid>
+                  </Grid> */}
                 </>
               )}
 

@@ -19,6 +19,7 @@ import Swal from "sweetalert2";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
+import { BACKEND_URL } from "config";
 // import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 // import { setPosts } from "state";
@@ -40,7 +41,18 @@ const style = {
 const infoSchema = yup.object().shape({
   infoId: yup.string(),
   about: yup.string().required("required"),
-  date: yup.date().required("required"),
+  date: yup
+    .string()
+    .required("required")
+    .matches(
+      /^(0[1-9]|[1-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/2024$/,
+      "Date must be in the format dd/mm/yyyy"
+    )
+    .test('is-future-date', 'Date must be in the future', function(value) {
+      const currentDate = new Date();
+      const inputDate = new Date(value.split('/').reverse().join('/'));
+      return inputDate >= currentDate;
+    }),
   contact: yup
     .string()
     .required()
@@ -48,6 +60,7 @@ const infoSchema = yup.object().shape({
     .min(10, "Must be exactly 10 digits")
     .max(10, "Must be exactly 10 digits"),
 });
+
 
 const initialValuesInfo = {
   infoId: "",
@@ -83,7 +96,7 @@ export const Dashboard = () => {
     console.log(values);
 
     const savedUserResponse = await fetch(
-      `http://localhost:3001/posts/${_id}?param1=${Name}`,
+      `${BACKEND_URL}/posts/${_id}?param1=${Name}`,
       {
         method: "POST",
         headers: {
@@ -119,7 +132,7 @@ export const Dashboard = () => {
     if (result.isConfirmed) {
       try {
 
-        const response = await fetch(`http://localhost:3001/posts/quiz/${_id}/deleteInfo`, {
+        const response = await fetch(`${BACKEND_URL}/posts/quiz/${_id}/deleteInfo`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json' // Specify the content type
@@ -155,7 +168,7 @@ export const Dashboard = () => {
     if (result.isConfirmed) {
       try {
 
-        const response = await fetch(`http://localhost:3001/posts/quiz/${_id}/deleteQuiz`, {
+        const response = await fetch(`${BACKEND_URL}/posts/quiz/${_id}/deleteQuiz`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json' // Specify the content type
@@ -222,8 +235,10 @@ export const Dashboard = () => {
                   name="infoId"
                   error={Boolean(touched.infoId) && Boolean(errors.infoId)}
                   helperText={touched.infoId && errors.infoId}
+                  sx={{width:"100%"}}
                 />
-                <TextField label={Name} name="name" disabled />
+                <TextField label={Name} name="name" disabled sx={{width:"100%"}}/>
+                <br />
                 <TextField
                   label="About"
                   onBlur={handleBlur}
@@ -232,7 +247,9 @@ export const Dashboard = () => {
                   name="about"
                   error={Boolean(touched.about) && Boolean(errors.about)}
                   helperText={touched.about && errors.about}
+                  sx={{width:"100%"}}
                 />
+                <br />
                 <TextField
                   label="Date of induction"
                   placeholder="dd/mm/yyyy"
@@ -242,7 +259,9 @@ export const Dashboard = () => {
                   name="date"
                   error={Boolean(touched.date) && Boolean(errors.date)}
                   helperText={touched.date && errors.date}
+                  sx={{width:"100%"}}
                 />
+                <br />
                 <TextField
                   label="Contact"
                   onBlur={handleBlur}
@@ -251,10 +270,12 @@ export const Dashboard = () => {
                   name="contact"
                   error={Boolean(touched.contact) && Boolean(errors.contact)}
                   helperText={touched.contact && errors.contact}
+                  sx={{width:"100%"}}
                 />
-                <button type="submit" onClick={handleSubmit}>
+                <hr />
+                <Button type="submit" size="large" variant="contained" onClick={handleSubmit}>
                   Submit
-                </button>
+                </Button>
               </Box>
             </form>
           )}

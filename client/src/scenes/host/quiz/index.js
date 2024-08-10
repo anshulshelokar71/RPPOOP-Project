@@ -59,6 +59,10 @@ const AddQuestionsComp = ({ userId }) => {
   useEffect(() => {
     fetchQuestions();
   }, []);
+  const questionsWithIds = questions.map((question, index) => ({
+  ...question,
+  id: question.id || index + 1, // Use existing id or generate one based on the index
+}));
 
   const fetchQuestions = async () => {
     try {
@@ -157,10 +161,7 @@ const AddQuestionsComp = ({ userId }) => {
       options: newQuestion.options.join("#"),
       answers: newQuestion.answers.join("#"),
     };
-    const questionsWithIds = questions.map((question, index) => ({
-  ...question,
-  id: question.id || index + 1, // Use existing id or generate one based on the index
-}));
+    
 
 
     try {

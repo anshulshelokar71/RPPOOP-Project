@@ -157,6 +157,11 @@ const AddQuestionsComp = ({ userId }) => {
       options: newQuestion.options.join("#"),
       answers: newQuestion.answers.join("#"),
     };
+    const questionsWithIds = questions.map((question, index) => ({
+  ...question,
+  id: question.id || index + 1, // Use existing id or generate one based on the index
+}));
+
 
     try {
       const response = await fetch(`${BACKEND_URL}/posts/quiz/${userId}`, {
@@ -375,7 +380,7 @@ const AddQuestionsComp = ({ userId }) => {
       {/* Questions List */}
       <Box sx={{ height: 400, width: "100%", mt: 3 }}>
         <DataGrid
-          rows={questions}
+          rows={questionsWithIds}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5, 10, 20]}
